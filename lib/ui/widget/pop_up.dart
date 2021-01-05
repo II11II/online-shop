@@ -64,13 +64,18 @@ showTicket(BuildContext context,String  matchId,String password,String instructi
           SizedBox(
             height: 8,
           ),
-          Text("${"match_id".tr()}:",style:Style.defaultText ,),
-          Text("$matchId:",style:Style.smallText ,),
-          Text("${"password".tr()}:",style:Style.defaultText),
-          Text("$password:",style:Style.smallText ,),
-
-          Text("${"match_instructions".tr()}:",style:Style.defaultText),
-          Text("$instruction:",style:Style.smallText ,),
+          Container( height: 100,width: 100,
+            child: Stepper(steps: [
+              Step(title: Text(""), content: FlutterLogo(size: 20,)),
+            ],),
+          ),
+          // Text("${"match_id".tr()}:",style:Style.defaultText ,),
+          // Text("$matchId:",style:Style.smallText ,),
+          // Text("${"password".tr()}:",style:Style.defaultText),
+          // Text("$password:",style:Style.smallText ,),
+          //
+          // Text("${"match_instructions".tr()}:",style:Style.defaultText),
+          // Text("$instruction:",style:Style.smallText ,),
 
 
           SizedBox(
@@ -167,13 +172,10 @@ showInfo(BuildContext context, {bool lock}) async {
                 style: Style.bodyText2,
               ),
               Text(
-                "SOFTCLUBUZ LLC",
+                "AZON LLC",
                 style: Style.defaultText,
               ),
-              Text(
-                "FUTURE DEVELOPMENT",
-                style: Style.defaultText,
-              ),
+
               SizedBox(
                 height: 10,
               ),

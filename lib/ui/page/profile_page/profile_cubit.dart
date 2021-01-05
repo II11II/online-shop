@@ -14,6 +14,12 @@ class ProfileCubit extends Cubit<ProfileState> {
   final log = Logger();
 
   Future init() async {
-    emit(state.copyWith(profile: await repository.getUser()));
+   Profile profile= await repository.getUser();
+    log.d(profile.email);
+    log.d(profile.username);
+    log.d(profile.password);
+    log.d(profile.token);
+    log.d(profile.date);
+    emit(state.copyWith(profile:profile));
   }
 }

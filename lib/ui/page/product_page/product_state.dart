@@ -1,6 +1,6 @@
-part of 'match_cubit.dart';
+part of 'product_cubit.dart';
 
-class MatchState  {
+class ProductState  {
   Payment payment;
   bool isLiked;
   NetworkState networkState;
@@ -10,7 +10,7 @@ class MatchState  {
   bool isInstructionExpanded;
   bool isDescriptionExpanded;
 
-  MatchState(this.tournament,
+  ProductState(this.tournament,
 
       {this.payment = Payment.PAY_ME,
         this.networkState=NetworkState.INITIAL,
@@ -19,7 +19,7 @@ class MatchState  {
       this.isDescriptionExpanded = false,
       this.isInstructionExpanded = false});
 
-  MatchState copyWith({
+  ProductState copyWith({
     Product tournament,
     Payment payment,
     String message,
@@ -28,7 +28,7 @@ class MatchState  {
     bool isInstructionExpanded,
     bool isDescriptionExpanded,
   }) {
-    return MatchState(tournament ?? this.tournament,
+    return ProductState(tournament ?? this.tournament,
         isLiked: isLiked??this.isLiked,
         message: message??this.message,
         networkState: networkState??this.networkState,

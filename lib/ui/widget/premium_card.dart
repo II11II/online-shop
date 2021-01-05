@@ -6,7 +6,7 @@ import 'package:online_shop/ui/page/home_page/home_cubit.dart';
 import 'package:online_shop/ui/style/style.dart';
 
 class PremiumCard extends StatelessWidget {
-  final Object category;
+  final Categories category;
   final Function onPressed;
 
   const PremiumCard(

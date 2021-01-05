@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:online_shop/exceptions/exceptions.dart';
 import 'package:online_shop/model/create_customer_order.dart';
 import 'package:online_shop/model/customer_orders_model.dart';
@@ -19,8 +20,7 @@ mixin Network {
     "content-type": "application/json"
   };
 
-  headersWithToken() async =>
-      {
+  headersWithToken() async => {
         "Accept": "application/json",
         "content-type": "application/json",
         "tkn": await Repository().getUserToken()
@@ -29,9 +29,7 @@ mixin Network {
   /// Categories api
   Future<GetCategory> getCategories() async {
     final response = await http
-        .get(
-        "$_url/api/category", headers: await headersWithToken()
-    )
+        .get("$_url/api/category", headers: await headersWithToken())
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -58,13 +56,10 @@ mixin Network {
   }
 
   Future<bool> addToFavorite(Product product) async {
-
-
     final response = await http
-        .post(
-        "$_url/profile/add2favorite", headers: await headersWithToken(),
-        body: jsonEncode(product.toJson())
-    )
+        .post("$_url/profile/add2favorite",
+            headers: await headersWithToken(),
+            body: jsonEncode(product.toJson()))
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -91,34 +86,35 @@ mixin Network {
   }
 
   Future<bool> removeFromFavorite(int id) async {
-    var body = {
-      "id": id
-    };
-    final request =  http
-        .Request("DELETE",
-        Uri.parse("$_url/profile/del4favorite")
-
-    );
+    var body = {"id": id};
+    final request =
+        http.Request("DELETE", Uri.parse("$_url/profile/del4favorite"));
     request.headers.addAll(await headersWithToken());
-    request.body=jsonEncode(body);
-   final response=await request.send().timeout(_timeout);
-    var responseBody=   await response.stream.bytesToString();
-
+    request.body = jsonEncode(body);
+    final response = await request.send().timeout(_timeout);
+    var responseBody = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-    final result = json.decode(responseBody);
-    if (result["statusCode"] == 200)
-    return true;
-    else
-    throw UnknownException( {"status code": response.statusCode, " responseBody": responseBody});
+      final result = json.decode(responseBody);
+      if (result["statusCode"] == 200)
+        return true;
+      else
+        throw UnknownException({
+          "status code": response.statusCode,
+          " responseBody": responseBody
+        });
     } else if (response.statusCode == 404) {
-    throw NotFoundException( {"status code": response.statusCode, " responseBody": responseBody});
+      throw NotFoundException(
+          {"status code": response.statusCode, " responseBody": responseBody});
     } else if (response.statusCode == 401) {
-    throw InvalidTokenException( {"status code": response.statusCode, "responseBody": responseBody});
+      throw InvalidTokenException(
+          {"status code": response.statusCode, "responseBody": responseBody});
     } else if (response.statusCode >= 500) {
-    throw ServerErrorException( {"status code": response.statusCode, "responseBody": responseBody});
+      throw ServerErrorException(
+          {"status code": response.statusCode, "responseBody": responseBody});
     } else
-    throw UnknownException( {"status code": response.statusCode, "responseBody": responseBody});
+      throw UnknownException(
+          {"status code": response.statusCode, "responseBody": responseBody});
   }
 
   Future<Profile> register(String email, String password, String phone) async {
@@ -126,7 +122,7 @@ mixin Network {
     print(body);
     final response = await http
         .post("$_url/profile/register",
-        headers: headers, body: json.encode(body))
+            headers: headers, body: json.encode(body))
         .timeout(_timeout);
 
     if (response.statusCode == 201) {
@@ -146,11 +142,11 @@ mixin Network {
   }
 
   Future<Profile> login(String login, String password) async {
-    var body = { "password": password, "username": login};
+    var body = {"password": password, "username": login};
 
     final response = await http
         .post("$_url/lgn/authenticate",
-        headers: headers, body: json.encode(body))
+            headers: headers, body: json.encode(body))
         .timeout(_timeout);
     if (response.statusCode == 200) {
       var jsonDecode = json.decode(response.body);
@@ -174,8 +170,8 @@ mixin Network {
   Future<GetCategory> getCategoriesById(int id) async {
     final response = await http
         .get(
-      "$_url/api/category/${id}",
-    )
+          "$_url/api/category/${id}",
+        )
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -197,8 +193,8 @@ mixin Network {
   Future<GetCategory> getCategoriesByName(String name) async {
     final response = await http
         .get(
-      "$_url/api/category/srch/${name}",
-    )
+          "$_url/api/category/srch/${name}",
+        )
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -218,18 +214,16 @@ mixin Network {
   }
 
   /// Customer order api
-  Future<CustomerOrder> getCustomerOrders() async {
+  Future<CustomerOrderBase> getCustomerOrders() async {
     print(await headersWithToken());
     final response = await http
-        .get(
-        "$_url/api/order", headers: await headersWithToken()
-    )
+        .get("$_url/api/order", headers: await headersWithToken())
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       if (result["statusCode"] == 200)
-        return CustomerOrder.fromJson(result);
+        return CustomerOrderBase.fromJson(result);
       else
         throw UnknownException(
             {"status code:": response.statusCode, "body": response.body});
@@ -247,33 +241,17 @@ mixin Network {
           {"status code:": response.statusCode, "body": response.body});
   }
 
-  Future<CustomerOrder> getOrderByRegion(String region) async {
-    Map<String, String> header = {"region": region};
+  Future<void> createOrderCustomer(Product order) async {
+    var body =jsonEncode( {
+      "product": order.toJson(),
+      "statusForOrder": "WAITING_PAYMENT"
+    });
+    Logger().d(body);
     final response = await http
-        .get("$_url/api/order/region", headers: header)
+        .post("$_url/api/order", headers: await headersWithToken(), body: body)
         .timeout(_timeout);
-
-    if (response.statusCode == 200) {
-      final result = json.decode(response.body);
-      if (result["statusCode"] == 200)
-        return CustomerOrder.fromJson(result);
-      else
-        throw UnknownException("getOrderByRegion()");
-    } else if (response.statusCode == 404) {
-      throw NotFoundException("getOrderByRegion()");
-    } else if (response.statusCode == 401) {
-      throw InvalidTokenException("getCategories()");
-    } else if (response.statusCode >= 500) {
-      throw ServerErrorException("getOrderByRegion()");
-    } else
-      throw UnknownException("getOrderByRegion()");
-  }
-
-  Future<CustomerOrder> createOrderCustomer(CreateCustomerOrder order) async {
-    final response = await http
-        .post("$_url/api/order", body: order.toJson())
-        .timeout(_timeout);
-
+    Logger().d("${response.statusCode}");
+    Logger().d("${response.body}");
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       if (result["statusCode"] == 200)
@@ -293,9 +271,7 @@ mixin Network {
   /// Products api
   Future<Products> favoriteProducts() async {
     final response = await http
-        .get(
-      "$_url/api/product/favorites",headers:await headersWithToken()
-    )
+        .get("$_url/api/product/favorites", headers: await headersWithToken())
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -317,10 +293,8 @@ mixin Network {
   Future<Products> getProductsByCategory(int id, int page) async {
     // TODO : where to give id and page To header or to url
     final response = await http
-        .get(
-        "$_url/api/product/by-category?id=$id&page=$page",
-        headers: await headersWithToken()
-    )
+        .get("$_url/api/product/by-category?id=$id&page=$page",
+            headers: await headersWithToken())
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -343,8 +317,8 @@ mixin Network {
     // TODO : where to give id and page To header or to url
     final response = await http
         .get(
-      "$_url/api/product/paging",
-    )
+          "$_url/api/product/paging",
+        )
         .timeout(_timeout);
 
     if (response.statusCode == 200) {
@@ -363,12 +337,10 @@ mixin Network {
       throw UnknownException("getProductsByPage()");
   }
 
-
   Future<Products> getPopularProducts() async {
     final response = await http
-        .get(
-        "$_url/api/product/fetch-products", headers: await headersWithToken()
-    )
+        .get("$_url/api/product/fetch-products",
+            headers: await headersWithToken())
         .timeout(_timeout);
 
     if (response.statusCode == 200) {

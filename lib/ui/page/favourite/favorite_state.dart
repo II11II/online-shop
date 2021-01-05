@@ -6,7 +6,7 @@ class FavoriteState {
   NetworkState state;
   String message;
 
-  FavoriteState({this.favoriteProducts, this.state, this.message});
+  FavoriteState({this.favoriteProducts, this.state=NetworkState.INITIAL, this.message});
 
   FavoriteState copyWith(
       { List<Product>  favoriteProducts, String message, NetworkState state}) {

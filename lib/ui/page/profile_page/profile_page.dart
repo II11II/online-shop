@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:online_shop/ui/page/entry_point/entry_point.dart';
+import 'package:online_shop/ui/page/map/map.dart';
 import 'package:online_shop/ui/page/profile_page/profile_cubit.dart';
 import 'package:online_shop/ui/state/network_state.dart';
 import 'package:online_shop/ui/style/style.dart';
@@ -15,47 +16,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        extendBody: true,
-        body: body(context),
-        // BlocConsumer<ProfileCubit, ProfileState>(
-        //     listener: (BuildContext context, state) async {
-        //   if (state.state == NetworkState.LOADING) {
-        //     showLoading(context);
-        //   } else if (state.state == NetworkState.LOADED) {
-        //     if (Navigator.of(context, rootNavigator: true).canPop())
-        //       Navigator.of(context, rootNavigator: true).pop();
-        //   } else if (state.state == NetworkState.SERVER_ERROR) {
-        //     if (Navigator.of(context, rootNavigator: true).canPop())
-        //       Navigator.of(context, rootNavigator: true).pop();
-        //     showMessage(context, state.message, Icons.report_problem_outlined,
-        //         iconColor: Colors.red);
-        //   } else if (state.state == NetworkState.INVALID_TOKEN) {
-        //     if (Navigator.of(context, rootNavigator: true).canPop())
-        //       Navigator.of(context, rootNavigator: true).pop();
-        //     showMessage(context, state.message, Icons.report_problem_outlined,
-        //         iconColor: Colors.red,
-        //         onPressed: () => Navigator.pushReplacement(context,
-        //             MaterialPageRoute(builder: (context) => EntryPoint())));
-        //   } else if (state.state == NetworkState.NO_CONNECTION) {
-        //     if (Navigator.of(context, rootNavigator: true).canPop())
-        //       Navigator.of(context, rootNavigator: true).pop();
-        //     await showMessage(
-        //         context, state.message, Icons.report_problem_outlined,
-        //         iconColor: Colors.red);
-        //   }
-        // }, builder: (context, state) {
-        //   if (state.state == NetworkState.LOADED)
-        //     // return body(context);
-        //     // TODO: Remove Container after api be ready
-        //     return Container();
-        //   else if (state.state == NetworkState.NO_CONNECTION)
-        //     return NoConnection(
-        //       onPressed: () async => await context.bloc<ProfileCubit>().init(),
-        //     );
-        //   else
-        //     return Container();
-        // })
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      body: body(context),
+
     );
   }
 
@@ -69,16 +33,7 @@ class ProfilePage extends StatelessWidget {
           flex: 5,
           child: Container(
             width: size.width,
-            decoration: BoxDecoration(
 
-                // image: DecorationImage(
-                //     fit: BoxFit.cover,
-                //  colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-                //     image: CachedNetworkImageProvider(
-                //       '${bloc.state.profile.backgroundImage}',
-                //     ),
-                // ),
-            ),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -92,7 +47,6 @@ class ProfilePage extends StatelessWidget {
                         child: Icon(Icons.person),
                         backgroundColor: Colors.white,
                         radius: 60,
-
                       ),
                     ),
                   ),
@@ -123,15 +77,13 @@ class ProfilePage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical:8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
                       child: TextFormField(
                         textInputAction: TextInputAction.done,
-                        initialValue: '${bloc.state.profile.username}',
+                        initialValue: '${bloc.state.profile?.email}',
                         style: Style.defaultText,
-
                         readOnly: true,
                         decoration: InputDecoration(
                             labelText: "${"email".tr()}:",
@@ -139,40 +91,47 @@ class ProfilePage extends StatelessWidget {
                             suffixStyle: TextStyle(color: Colors.white),
                             labelStyle: TextStyle(color: Colors.white),
                             prefixStyle: TextStyle(color: Colors.white),
-
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8))),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical:8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
-                      child: TextFormField(
-                        initialValue: '${bloc.state.profile.username}',
-                        textInputAction: TextInputAction.done,
-                        readOnly: true,
-                        style: Style.defaultText,
-                        decoration: InputDecoration(
-                            labelText: "phone_number".tr(),
-                            filled: true,
-                            suffixStyle: TextStyle(color: Colors.white),
-                            labelStyle: TextStyle(color: Colors.white),
-                            prefixStyle: TextStyle(color: Colors.white),
+                      child: BlocBuilder<ProfileCubit,ProfileState>(
 
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8))),
+                        builder: (context, snapshot) {
+                          if(snapshot.profile!=null)
+                          return TextFormField(
+                            initialValue: '${bloc.state.profile.username}',
+                            textInputAction: TextInputAction.done,
+                            readOnly: true,
+                            style: Style.defaultText,
+                            decoration: InputDecoration(
+                                labelText: "phone_number".tr(),
+                                filled: true,
+                                suffixStyle: TextStyle(color: Colors.white),
+                                labelStyle: TextStyle(color: Colors.white),
+                                prefixStyle: TextStyle(color: Colors.white),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                          );
+                          else return Container();
+                        }
                       ),
                     ),
                   ),
+
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical:8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: CustomButton(
                       onPressed: () {
-                        showWithdraw(context);
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (c) => Map()));
                       },
                       title: Text(
-                        'withdraw'.tr(),
+                        'show_shops'.tr(),
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,

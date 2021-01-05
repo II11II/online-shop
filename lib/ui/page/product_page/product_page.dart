@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:online_shop/model/products.dart';
 import 'package:online_shop/ui/page/entry_point/entry_point.dart';
-import 'package:online_shop/ui/page/match_page/match_cubit.dart';
+import 'package:online_shop/ui/page/product_page/product_cubit.dart';
 import 'package:online_shop/ui/state/network_state.dart';
 import 'package:online_shop/ui/style/color.dart';
 import 'package:online_shop/ui/widget/custom_button.dart';
@@ -24,7 +24,8 @@ class ProductPage extends StatefulWidget {
   _ProductPageState createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin {
+class _ProductPageState extends State<ProductPage>
+    with TickerProviderStateMixin {
   AnimationController animationController;
   Animation animation;
   var isExpanded = false;
@@ -45,8 +46,10 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   }
 
   Widget body(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    var bloc = context.bloc<MatchCubit>();
+    var size = MediaQuery
+        .of(context)
+        .size;
+    var bloc = context.bloc<ProductCubit>();
 
     return Column(
       children: [
@@ -77,27 +80,39 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                   Text('${widget.product.price}'),
                   IconButton(
                     onPressed: () async => await bloc.likePress(widget.product),
-                    icon: BlocConsumer<MatchCubit, MatchState>(
+                    icon: BlocConsumer<ProductCubit, ProductState>(
                         listenWhen: (p, c) => p.networkState != c.networkState,
                         listener: (context, state) {
-                          if (state.networkState == NetworkState.LOADED ||
-                              state.networkState == NetworkState.LOADING) {
-                          } else if (state.networkState ==
+
+                          if (state.networkState ==
+                              NetworkState.LOADING)
+                            showLoading(context);
+                          else if (state.networkState ==
+                              NetworkState.LOADED) {
+                            Navigator.of(context,rootNavigator: true).pop();
+                            showMessage(context, "",
+                                Icons.check_circle_outline,
+                                iconColor: Colors
+                                    .greenAccent);
+                          }else
+                          if (state.networkState ==
                               NetworkState.INVALID_TOKEN) {
                             showMessage(context, state.message,
                                 Icons.report_problem_outlined,
                                 iconColor: Colors.red,
-                                onPressed: () => Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EntryPoint())));
+                                onPressed: () =>
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                EntryPoint())));
                           } else {
                             showMessage(context, state.message,
                                 Icons.report_problem_outlined,
                                 iconColor: Colors.red);
                           }
                         },
-                        builder: (context, MatchState state) {
+                        builder: (context, ProductState state) {
                           if (state.networkState == NetworkState.LOADED &&
                               state.isLiked)
                             return Icon(
@@ -140,27 +155,27 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _title(context, 'description'.tr(),
-                      () => bloc.expandDescription()),
-                  BlocBuilder<MatchCubit, MatchState>(
-                    builder: (context, MatchState state) => AnimatedCrossFade(
-                      firstChild: Text(
-                        '${bloc.state.tournament.description}',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                        maxLines: 3,
-                      ),
-                      secondChild: Text(
-                        '${bloc.state.tournament.description}',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                      ),
-                      crossFadeState: !state.isDescriptionExpanded
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 500),
-                    ),
+                          () => bloc.expandDescription()),
+                  BlocBuilder<ProductCubit, ProductState>(
+                    builder: (context, ProductState state) =>
+                        AnimatedCrossFade(
+                          firstChild: Text(
+                            '${bloc.state.tournament.description}',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                            maxLines: 3,
+                          ),
+                          secondChild: Text(
+                            '${bloc.state.tournament.description}',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          ),
+                          crossFadeState: !state.isDescriptionExpanded
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          duration: Duration(milliseconds: 500),
+                        ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
                     child: Text(
@@ -170,17 +185,21 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                   ),
                   Column(
                     children: [
-                      if (bloc.state.tournament.oldPrice != null)
+                      if (bloc.state.tournament.oldPrice != null &&
+                          bloc.state.tournament.oldPrice >
+                              bloc.state.tournament.price)
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                              "${"old_prize".tr()}: ${bloc.state.tournament.oldPrice}"),
+                              "${"old_prize".tr()}: ${bloc.state.tournament
+                                  .oldPrice}"),
                         ),
                       if (bloc.state.tournament.oldPrice != null)
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                              "${"new_prize".tr()}: ${bloc.state.tournament.price}"),
+                              "${"new_prize".tr()}: ${bloc.state.tournament
+                                  .price}"),
                         ),
                       if (bloc.state.tournament.oldPrice == null)
                         Padding(
@@ -226,9 +245,9 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                             elevation: 10,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16),
-                            )),
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                )),
                             builder: (BuildContext context) {
                               return Padding(
                                 padding: const EdgeInsets.only(
@@ -236,7 +255,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text('get_ticket_now'.tr()),
                                     Padding(
@@ -244,29 +263,75 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
                                           vertical: 16),
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceEvenly,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('total_payment'.tr()),
-                                                FittedBox(child: Text('${bloc.state.tournament.price}'))
+                                                FittedBox(
+                                                    child: Text(
+                                                        '${bloc.state.tournament
+                                                            .price}'))
                                               ],
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Text("${'payment_option'.tr()}: ${'cash'.tr()}"),
+                                            child: Text(
+                                                "${'payment_option'
+                                                    .tr()}: ${'cash'.tr()}"),
                                           ),
+                                          BlocListener(
+                                            cubit: ProductCubit(bloc.state.tournament),
+                                            listener:
+                                                (BuildContext context, state) {
 
-                                          CustomButton(
-                                            text: 'buy_now'.tr(),
+                                              if (state.networkState ==
+                                                  NetworkState.LOADING)
+                                                showLoading(context);
+                                              else if (state.networkState ==
+                                                  NetworkState.LOADED) {
+                                                showMessage(context, "",
+                                                    Icons.check_circle_outline,
+                                                    iconColor: Colors
+                                                        .greenAccent);
+                                              } else if (state.networkState ==
+                                                  NetworkState.INVALID_TOKEN) {
+                                                showMessage(
+                                                    context,
+                                                    state.message,
+                                                    Icons
+                                                        .report_problem_outlined,
+                                                    iconColor: Colors.red,
+                                                    onPressed: () =>
+                                                        Navigator
+                                                            .pushReplacement(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                    EntryPoint())));
+                                              } else {
+                                                showMessage(
+                                                    context,
+                                                    state.message,
+                                                    Icons
+                                                        .report_problem_outlined,
+                                                    iconColor: Colors.red);
+                                              }
+                                            },
+                                            child: CustomButton(
+                                              text: 'buy_now'.tr(),
+                                              onPressed: () async =>
+                                              await bloc.buy(),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -299,7 +364,11 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
         FlatButton(
           child: Text(
             'more_info'.tr(),
-            style: Theme.of(context).textTheme.button.copyWith(
+            style: Theme
+                .of(context)
+                .textTheme
+                .button
+                .copyWith(
                 fontWeight: FontWeight.w700, color: ColorApp.blueAccent),
           ),
           onPressed: onPressed,
@@ -309,7 +378,7 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
   }
 
   Widget appBar(BuildContext context) {
-    var bloc = context.bloc<MatchCubit>();
+    var bloc = context.bloc<ProductCubit>();
     return Row(
       children: [
         Container(
@@ -323,12 +392,12 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
         ),
         Container(
             child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            '${bloc.state.tournament.name}',
-            style: TextStyle(),
-          ),
-        ))
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '${bloc.state.tournament.name}',
+                style: TextStyle(),
+              ),
+            ))
       ],
     );
   }

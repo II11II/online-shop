@@ -27,7 +27,7 @@ final log=Logger();
 
   @override
   Widget build(BuildContext context) {
-    bloc.state.isLiked = product.isFavourite;
+    bloc.state.isLiked = product.favorite;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(

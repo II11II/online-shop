@@ -1,7 +1,7 @@
 class GetCategory {
   int statusCode;
   String description;
-  List<Object> object;
+  List<Categories> object;
 
   GetCategory({this.statusCode, this.description, this.object});
 
@@ -9,9 +9,9 @@ class GetCategory {
     statusCode = json['statusCode'];
     description = json['description'];
     if (json['object'] != null) {
-      object = new List<Object>();
+      object = new List<Categories>();
       json['object'].forEach((v) {
-        object.add(new Object.fromJson(v));
+        object.add(new Categories.fromJson(v));
       });
     }
   }
@@ -27,43 +27,40 @@ class GetCategory {
   }
 }
 
-class Object {
-  int id;
-  String name;
-  String imageCategory;
-  int typeCategory;
-  String iconCategory;
+
+class Categories {
   bool clicked;
   String description;
+  int id;
+  String imageCategory;
+  String name;
+  int typeCategory;
 
-  Object(
-      {this.id,
-        this.name,
+  Categories(
+      {this.clicked,
+        this.description,
+        this.id,
         this.imageCategory,
-        this.typeCategory,
-        this.iconCategory,
-        this.clicked,
-        this.description});
+        this.name,
+        this.typeCategory});
 
-  Object.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    imageCategory = json['imageCategory'];
-    typeCategory = json['typeCategory'];
-    iconCategory = json['iconCategory'];
+  Categories.fromJson(Map<String, dynamic> json) {
     clicked = json['clicked'];
     description = json['description'];
+    id = json['id'];
+    imageCategory = json['imageCategory'];
+    name = json['name'];
+    typeCategory = json['typeCategory'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['imageCategory'] = this.imageCategory;
-    data['typeCategory'] = this.typeCategory;
-    data['iconCategory'] = this.iconCategory;
     data['clicked'] = this.clicked;
     data['description'] = this.description;
+    data['id'] = this.id;
+    data['imageCategory'] = this.imageCategory;
+    data['name'] = this.name;
+    data['typeCategory'] = this.typeCategory;
     return data;
   }
 }

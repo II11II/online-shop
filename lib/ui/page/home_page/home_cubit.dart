@@ -49,6 +49,8 @@ class HomeCubit extends Cubit<HomeState> {
   // }
 
   Future init() async {
+    await Future.delayed(Duration.zero);
+    if(state.newProducts!=null)
     emit(state.copyWith(networkState: NetworkState.LOADING));
     try {
       GetCategory categories=await getCategories();

@@ -9,9 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_map: ^0.10.1+1
   logger:
-  easy_localization:
 #  path_provider:
 #  path:
 #  sqflite:
@@ -23,7 +22,8 @@ dependencies:
   flutter_bloc:
   bloc:
   cupertino_icons: ^0.1.3
-
+  easy_localization:
+    git: https://github.com/egeysn/easy_localization
 dev_dependencies:
   flutter_test:
     sdk: flutter

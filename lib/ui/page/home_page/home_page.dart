@@ -11,8 +11,8 @@ import 'package:online_shop/ui/page/category/category_page.dart';
 import 'package:online_shop/ui/page/entry_point/entry_point.dart';
 import 'package:online_shop/ui/page/all_categories_page/all_categories_page.dart';
 import 'package:online_shop/ui/page/home_page/home_cubit.dart';
-import 'package:online_shop/ui/page/match_page/match_cubit.dart';
-import 'package:online_shop/ui/page/match_page/match_page.dart';
+import 'package:online_shop/ui/page/product_page/product_cubit.dart';
+import 'package:online_shop/ui/page/product_page/product_page.dart';
 import 'package:online_shop/ui/state/network_state.dart';
 import 'package:online_shop/ui/style/color.dart';
 import 'package:online_shop/ui/style/style.dart';
@@ -225,7 +225,7 @@ class HomePage extends StatelessWidget {
                                       builder: (c) =>
                                           BlocProvider(
                                           create: (BuildContext context) =>
-                                              MatchCubit( bloc.state.newProducts[index]
+                                              ProductCubit( bloc.state.newProducts[index]
                                                 ),
                                           child: ProductPage(product: bloc.state.newProducts[index],))
                                     )
@@ -314,7 +314,7 @@ class HomePage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(
-                          'pubg_arena'.tr(),
+                          'AZON',
                           style: Theme.of(context).textTheme.headline3,
                         ),
                       )

@@ -6,6 +6,7 @@ import 'package:online_shop/ui/page/entry_point/entry_point.dart';
 import 'package:online_shop/ui/page/favourite/favorite_cubit.dart';
 import 'package:online_shop/ui/page/favourite/favorite_page.dart';
 import 'package:online_shop/ui/page/my_orders_page/my_orders_cubit.dart';
+import 'package:online_shop/ui/page/status_page/status_page.dart';
 import 'package:online_shop/ui/state/network_state.dart';
 import 'package:online_shop/ui/widget/match_card/match_card.dart';
 import 'package:online_shop/ui/widget/no_connection.dart';
@@ -96,9 +97,8 @@ class MyOrdersPage extends StatelessWidget {
               product: bloc.state.customerOrders.object[index].product,
               buttonTitle: "ticket".tr(),
               onPressed: () {
-                var info = bloc.state.customerOrders.object[index];
-                showTicket(context, info.statusForOrder, "${info.quantity}",
-                    "${info.totalPrice}");
+                var customerOrder = bloc.state.customerOrders.object[index];
+               Navigator.push(context, MaterialPageRoute(builder: (context)=>StatusPage(order:customerOrder)));
               },
             ));
           }),

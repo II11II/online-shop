@@ -16,7 +16,7 @@ class MyOrdersCubit extends Cubit<MyTicketsState> {
   Future getCustomerOrders() async {
     try {
       emit(state.copyWith(state: NetworkState.LOADING));
-      CustomerOrder customerOrders = await repository.getCustomerOrders();
+      CustomerOrderBase customerOrders = await repository.getCustomerOrders();
       emit(state.copyWith(state: NetworkState.LOADED,customerOrders: customerOrders));
 
     }

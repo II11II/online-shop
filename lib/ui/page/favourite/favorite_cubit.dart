@@ -18,8 +18,11 @@ class FavoriteProductsCubit extends Cubit<FavoriteState> {
 
   Future getFavorites() async {
     try {
+      await Future.microtask(() => null);
       emit(state.copyWith(state: NetworkState.LOADING));
+
       Products favoriteProducts = await repository.favoriteProducts();
+
       emit(state.copyWith(
           state: NetworkState.LOADED,
           favoriteProducts: favoriteProducts.object));

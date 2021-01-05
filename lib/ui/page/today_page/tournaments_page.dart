@@ -2,8 +2,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:online_shop/ui/page/entry_point/entry_point.dart';
-// import 'package:online_shop/ui/page/match_page/match_cubit.dart';
-// import 'package:online_shop/ui/page/match_page/match_page.dart';
+// import 'package:online_shop/ui/page/product_page/product_cubit.dart';
+// import 'package:online_shop/ui/page/product_page/product_page.dart';
 // import 'package:online_shop/ui/page/today_page/tournaments_cubit.dart';
 // import 'package:online_shop/ui/state/network_state.dart';
 // import 'package:online_shop/ui/widget/match_card/match_card.dart';

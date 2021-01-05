@@ -4,16 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:online_shop/ui/page/entry_point/entry_point.dart';
 import 'package:online_shop/ui/page/favourite/favorite_cubit.dart';
-import 'package:online_shop/ui/page/favourite/favorite_cubit.dart';
-import 'package:online_shop/ui/page/favourite/favorite_cubit.dart';
-import 'package:online_shop/ui/page/favourite/favorite_cubit.dart';
-import 'package:online_shop/ui/page/my_orders_page/my_orders_cubit.dart';
 import 'package:online_shop/ui/state/network_state.dart';
 import 'package:online_shop/ui/widget/match_card/match_card.dart';
 import 'package:online_shop/ui/widget/no_connection.dart';
 import 'package:online_shop/ui/widget/pop_up.dart';
 
 class FavoriteProductsPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     var bloc=context.bloc<FavoriteProductsCubit>();
@@ -21,12 +18,15 @@ class FavoriteProductsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('my_tickets'.tr()),
+        title: Text('favorite_products'.tr()),
       ),
-      body: BlocConsumer<FavoriteProductsCubit, FavoriteState>(
+      body:  BlocConsumer<FavoriteProductsCubit, FavoriteState>(
+        cubit: bloc..getFavorites(),
+
           listener: (BuildContext context, state) async {
+
             if (state.state == NetworkState.LOADING) {
-              showLoading(context);
+             await showLoading(context);
             } else if (state.state == NetworkState.LOADED) {
               if (Navigator.of(context, rootNavigator: true).canPop())
                 Navigator.of(context, rootNavigator: true).pop();
@@ -43,8 +43,8 @@ class FavoriteProductsPage extends StatelessWidget {
                   onPressed: () => Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => EntryPoint())));
             } else if (state.state == NetworkState.NO_CONNECTION) {
-              if (Navigator.of(context, rootNavigator: true).canPop())
-                Navigator.of(context, rootNavigator: true).pop();
+              // if (Navigator.of(context, rootNavigator: true).canPop())
+              //   Navigator.of(context, rootNavigator: true).pop();
               await showMessage(
                   context, state.message, Icons.report_problem_outlined,
                   iconColor: Colors.red);
@@ -52,8 +52,7 @@ class FavoriteProductsPage extends StatelessWidget {
           }, builder: (context, state) {
         if (state.state == NetworkState.LOADED)
           return body(context);
-        // TODO: Delete Container after be ready  api
-        // return Container();
+
         else if (state.state == NetworkState.NO_CONNECTION)
           return NoConnection(
             onPressed: () async =>
